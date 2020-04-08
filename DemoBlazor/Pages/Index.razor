@@ -1,0 +1,13 @@
+﻿@page "/"
+@using System.Net.Http.Headers
+@using Blazor.Extensions.Storage
+@using DemoBlazor.Services
+
+@inject HttpClient Http
+@inject LocalStorage LocalStorage
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />

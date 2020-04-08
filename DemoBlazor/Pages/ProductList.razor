@@ -1,0 +1,63 @@
+﻿@page "/productlist"
+@using System.Net.Http.Headers
+@using Blazor.Extensions.Storage
+@using DemoBlazor.Models
+@using DemoBlazor.Services
+@inject NavigationManager NavigationManager
+
+@inject HttpClient Http
+@inject IProductService ProductService
+@inject LocalStorage LocalStorage
+
+<h3>ProductList</h3>
+@if (products == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Id</th>
+                <th>Product Name</th>
+                <th>Unit Price</th>
+                <th>Units In Stock</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.ProductId</td>
+                    <td>@product.ProductName</td>
+                    <td>@product.UnitPrice</td>
+                    <td>@product.UnitsInStock</td>
+                    <td><button class="btn btn-primary btn-sm" @onclick="@(() => GoToDetail(product.ProductId))">Detaya Git</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    Product[] products;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (!Http.DefaultRequestHeaders.Contains("Authorization"))
+        {
+            var token = await LocalStorage.GetItem<string>("token");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        }
+        products = await ProductService.GetProducts();
+    }
+
+    void GoToDetail(int productId)
+    {
+        NavigationManager.NavigateTo("/productdetail/" + productId);
+    }
+}
